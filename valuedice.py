@@ -39,11 +39,11 @@ def make_layers(input_dim , unit_size):
     return nn.Sequential(*layers)
 
 
-def train(agent_traj, expert_traj, expert_init_s, pol, vf, optim_vf, optim_pol,batch_size = 32, step = 4, aplha = 0.1, gamma = 0.99):
+def train(agent_traj, expert_traj, expert_init_s, pol, vf, optim_vf, optim_pol,batch_size = 32,aplha = 0.1, gamma = 0.99):
     agent_iterator = agent_traj.iterate_step(
-        batch_size=batch_size, step=step)
+        batch_size=batch_size, step=1)
     expert_iterator = expert_traj.iterate_step(
-        batch_size=batch_size, step=step)
+        batch_size=batch_size, step=1)
     for agent_batch, expert_batch in zip(agent_iterator, expert_iterator):
         bellman_e = non_reward_bellman(pol, vf, expert_batch, gamma, sampling=1)
         bellman_a = non_reward_bellman(pol, vf, agent_batch, gamma, sampling=1)
@@ -95,3 +95,9 @@ def non_reward_bellman(pol, vf, batch, gamma, sampling = 1):
         
 
     return bellman_loss
+
+def sample_agent_traj():
+    env = gym.make("gym_flatworld:Flatworld-v0")
+    for i in range(epis_num):
+       o = env.reset()
+        
